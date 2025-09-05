@@ -2,30 +2,33 @@
 @use "mixins";
 
 .modal {
-  @include mixins.sublayer;
-  // height: max-content;
-  position: absolute;
-  display: none;
-  justify-content: center;
+  position: fixed;                
+  inset: 0;                       
+  display: none;                    
   background-color: $overlayBackground;
-  z-index: 100;
-  padding-top: 5vh;
-  padding-bottom: 5vh;
-  box-sizing: border-box;
+  z-index: 1000;
 
-  &_active {
-    display: flex;
+  &.modal_active {
+    display: flex;                 
+    align-items: center;
+    justify-content: center;
   }
 
   &__container {
-    @include mixins.container;
     @include mixins.flex(column);
     gap: $defaultPadding;
     background-color: $background;
-    // min-height: 90vmin;
     border-radius: 3rem;
-    box-sizing: border-box;
     position: relative;
+
+  
+    width: min(1240px, calc(100vw - 4rem));
+    max-height: calc(100vh - 4rem);
+    overflow: auto;
+
+    
+    padding: $defaultPadding;
+    box-sizing: border-box;
   }
 
   &__content {
@@ -59,7 +62,7 @@
   }
 
   &__message {
-    white-space:nowrap;
+    white-space: nowrap;
     max-width: 60%;
     text-overflow: ellipsis;
     overflow: hidden;

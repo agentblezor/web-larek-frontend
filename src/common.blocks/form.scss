@@ -1,37 +1,42 @@
 @use "variables" as *;
-@use "mixins";
 
-.form {
-  @include mixins.flex(column);
-  gap: 1.5rem;
-  border-radius: 3rem;
 
-  &__label {
-    flex-grow: 1;
+.form__input {
+  background-color: $primaryLight !important; 
+  color: $secondary;
+  border: $defaultBorder;
+  border-radius: 1.5rem;
+  padding: 1rem;
+  font-size: 1.4rem;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  caret-color: $secondary;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  &__input {
-    background: transparent;
-    color: white;
-    border: $defaultBorder;
-    border-radius: 1.5rem;
-    padding: 1rem;
-    font-size: 1.4rem;
-    width: 100%;
-    box-sizing: border-box;
-    outline-color: $secondary;
+  &:focus {
+    background-color: $primaryLight;
+    color: $secondary;
+    border: $hoverBorder;
+  }
 
-    &:focus {
-      outline-style: solid;
-    }
+  
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: $secondary;
+    caret-color: $secondary;
+    -webkit-box-shadow: 0 0 0 1000px $primaryLight inset;
+            box-shadow: 0 0 0 1000px $primaryLight inset;
+    transition: background-color 9999s ease-out 0s;
+  }
 
-    &:invalid {
-      border-color: $error;
-      outline-color: $error;
-    }
-
-    &::placeholder {
-      color: lighten($primaryLight, 23%);
-    }
+  
+  &:-moz-autofill {
+    -moz-text-fill-color: $secondary;
+    box-shadow: 0 0 0 1000px $primaryLight inset;
   }
 }

@@ -8,14 +8,13 @@
   background-color: $primary;
   color: white;
   padding: $defaultPadding;
+ 
 
   &_full {
     flex-direction: row;
     background-color: transparent;
 
-    .card__title {
-      flex-grow: 0;
-    }
+    .card__title { flex-grow: 0; }
   }
 
   &_compact {
@@ -24,9 +23,7 @@
     align-items: center;
     border-radius: 0;
 
-    .card__title {
-      flex-grow: 1;
-    }
+    .card__title { flex-grow: 1; }
   }
 
   &__column {
@@ -45,42 +42,50 @@
     aspect-ratio: 1;
     margin: 3.75rem;
   }
+
   &__title {
     font-size: $titleFontSize;
     font-weight: 500;
     margin: 0;
     flex-grow: 1;
+    text-align: left;
   }
+
   &__text {
     text-align: left;
     flex-grow: 1;
   }
+
+
   &__category {
-    padding: 0.5rem 1.25rem;
+    width: max-content;
+    white-space: nowrap;
+    padding: 10px 25px;
     border-radius: 2.5rem;
     margin-bottom: 12px;
     color: $primary;
 
-    &_soft {
-      background-color: $category1;
-    }
-    &_hard {
-      background-color: $category5;
-    }
-    &_other {
-      background-color: $category2;
-    }
-    &_additional {
-      background-color: $category3;
-    }
-    &_button {
-      background-color: $category4;
-    }
-  }
-  &__action {
+    
+    &_soft       { background-color: $category1; }
+    &_hard       { background-color: $category5; }
+    &_other      { background-color: $category2; }
+    &_additional { background-color: $category3; }
+    &_button     { background-color: $category4; }
 
+    
+    &[data-mod="hard"]       { background-color: $category5; }
+    &[data-mod="other"]      { background-color: $category2; }
+    &[data-mod="additional"] { background-color: $category3; }
+    &[data-mod="button"]     { background-color: $category4; }
   }
+
   &__price {
+    margin-right: auto;
+  }
 
+  &__action {
+   
   }
 }
+
+
