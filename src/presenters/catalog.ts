@@ -121,18 +121,23 @@ export class CatalogPresenter {
 });
   }
 
-  private async loadProducts() {
-    try {
-      const res = await this.api.get('/products') as ApiListResponse<IProduct>;
-      const items = res.items.map((p) => ({
-        ...p,
-        image: /^https?:\/\//i.test(p.image) ? p.image : `${CDN_URL}/${p.image}`,
-      }));
-      this.model.setProducts(items);
-    } catch (e) {
-      console.warn('Falling back to stub products due to API error:', e);
-      this.model.setProducts(STUB_PRODUCTS);
-    }
+ private async loadProducts() {
+
+  if (process.env.NODE_ENV !== 'production') {
+    this.model.setProducts(STUB_PRODUCTS);
+    return;
+  }
+
+  try {
+    const res = await this.api.get('/products') as ApiListResponse<IProduct>;
+    const items = res.items.map((p) => ({
+      ...p,
+      image: /^https?:\/\//i.test(p.image) ? p.image : `${CDN_URL}/${p.image}`,
+    }));
+    this.model.setProducts(items);
+  } catch (e) {
+    console.warn('Falling back to stub products due to API error:', e);
+    this.model.setProducts(STUB_PRODUCTS);
   }
 }
-
+}

@@ -1,20 +1,28 @@
-
 import { IProduct } from '../types/domain';
 import { ICatalogView } from '../types/views';
 import { cloneTemplate, ensureElement } from '../utils/utils';
 
+// Модификаторы для бейджа категории
+const CAT_MODS = [
+  'card__category_soft',
+  'card__category_hard',
+  'card__category_other',
+  'card__category_additional',
+  'card__category_button',
+];
 
-const MOD: Record<string, 'soft' | 'hard' | 'other' | 'additional' | 'button'> = {
-  'софт-скил': 'soft',
-  'хард-скил': 'hard',
-  'другое': 'other',
-  'дополнительное': 'additional',
-  'кнопка': 'button',
+const CAT_MAP: Record<string, string> = {
+  'софт-скил': 'card__category_soft',
+  'хард-скил': 'card__category_hard',
+  'другое': 'card__category_other',
+  'дополнительное': 'card__category_additional',
+  'кнопка': 'card__category_button',
 };
 
-function paintBadge(el: HTMLElement, category: string) {
+function applyCategoryBadge(el: HTMLElement, category: string) {
+  el.classList.remove(...CAT_MODS);
+  el.classList.add(CAT_MAP[category] ?? 'card__category_other');
   el.textContent = category;
-  el.setAttribute('data-mod', MOD[category] ?? 'other');
 }
 
 export class CatalogView implements ICatalogView {
@@ -31,7 +39,6 @@ export class CatalogView implements ICatalogView {
       typeof container === 'string'
         ? ensureElement<HTMLElement>(container)
         : container;
-
     this.catalogTemplate = ensureElement<HTMLTemplateElement>(catalogTemplateId);
     this.previewTemplate = ensureElement<HTMLTemplateElement>(previewTemplateId);
   }
@@ -47,12 +54,14 @@ export class CatalogView implements ICatalogView {
       const card = cloneTemplate<HTMLButtonElement>(this.catalogTemplate);
       card.dataset.id = product.id;
 
-      card.querySelector('.card__title')!.textContent = product.title;
-      card.querySelector('.card__price')!.textContent =
-        this.formatPrice((product as any).price);
+      const titleEl = card.querySelector('.card__title') as HTMLElement | null;
+      if (titleEl) titleEl.textContent = product.title;
+
+      const priceEl = card.querySelector('.card__price') as HTMLElement | null;
+      if (priceEl) priceEl.textContent = this.formatPrice((product as any).price);
 
       const catEl = card.querySelector('.card__category') as HTMLElement | null;
-      if (catEl) paintBadge(catEl, product.category); // ← важно!
+      if (catEl) applyCategoryBadge(catEl, product.category);
 
       const img = card.querySelector('.card__image') as HTMLImageElement | null;
       if (img && product.image) img.src = product.image;
@@ -72,19 +81,21 @@ export class CatalogView implements ICatalogView {
   createCardPreview(product: IProduct): HTMLElement {
     const node = cloneTemplate<HTMLElement>(this.previewTemplate);
 
-    node.querySelector('.card__title')!.textContent = product.title;
-    node.querySelector('.card__text')!.textContent = product.description;
+    const titleEl = node.querySelector('.card__title') as HTMLElement | null;
+    if (titleEl) titleEl.textContent = product.title;
+
+    const textEl = node.querySelector('.card__text') as HTMLElement | null;
+    if (textEl) textEl.textContent = product.description;
 
     const catEl = node.querySelector('.card__category') as HTMLElement | null;
-    if (catEl) paintBadge(catEl, product.category); // ← важно!
+    if (catEl) applyCategoryBadge(catEl, product.category);
 
-    node.querySelector('.card__price')!.textContent =
-      this.formatPrice((product as any).price);
+    const priceEl = node.querySelector('.card__price') as HTMLElement | null;
+    if (priceEl) priceEl.textContent = this.formatPrice((product as any).price);
 
     const img = node.querySelector('.card__image') as HTMLImageElement | null;
     if (img && product.image) img.src = product.image;
 
-    
     const btn = node.querySelector('.card__button') as HTMLButtonElement | null;
     if (btn && (product as any).price == null) {
       btn.textContent = 'Недоступно';
