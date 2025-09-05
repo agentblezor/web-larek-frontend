@@ -1,7 +1,7 @@
 // src/presenters/basket.ts
 import { IEvents } from '../components/base/events';
 import { AppEvent } from '../types/events';
-import { IBasketItem } from '../types/models';
+import { IBasketItem } from '../types/domain';
 import { BasketModel } from '../models/basket';
 import { BasketView } from '../views/basket';
 import { CatalogModel } from '../models/catalog';

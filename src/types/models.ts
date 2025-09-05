@@ -1,12 +1,13 @@
-import { IProduct, IOrderFormData } from './domain';
+import { IProduct, IBasketItem, IOrderFormData } from './domain';
 
-// Интерфейс модели каталога
+
 export interface ICatalogModel {
-  getProducts(): Promise<IProduct[]>;
+  setProducts(products: IProduct[]): void;
+  getProducts(): IProduct[];
   getProductById(id: string): IProduct | undefined;
 }
 
-// Интерфейс модели корзины
+// остальное без изменений…
 export interface IBasketModel {
   getItems(): IBasketItem[];
   addItem(item: IBasketItem): void;
@@ -16,7 +17,6 @@ export interface IBasketModel {
   hasItem(id: string): boolean;
 }
 
-// Интерфейс модели оформления заказа
 export interface IOrderModel {
   setPaymentMethod(method: string): void;
   setAddress(address: string): void;
@@ -24,10 +24,4 @@ export interface IOrderModel {
   getOrderData(): IOrderFormData;
   isValidStage1(): boolean;
   isValidStage2(): boolean;
-}
-
-export interface IBasketItem {
-  id: string;
-  title: string;
-  price: number | null | undefined;
 }

@@ -1,6 +1,6 @@
 import { ensureElement, cloneTemplate } from '../utils/utils';
 import { IBasketView } from '../types/views';
-import { IBasketItem } from '../types/models';
+import { IBasketItem } from '../types/domain';
 
 export class BasketView implements IBasketView {
   private root?: HTMLElement;

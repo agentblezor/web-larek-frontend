@@ -7,7 +7,7 @@ import { OrderModel } from './models/order';
 
 import { CatalogView } from './views/catalog';
 import { BasketView } from './views/basket';
-import { OrderView } from './views/order';
+import { OrderView, SuccessMessage } from './views/order';
 import { ModalView } from './views/modal';
 
 import { CatalogPresenter } from './presenters/catalog';
@@ -32,7 +32,7 @@ function boot() {
   const api = new Api(API_URL);
 
   // 3) модели
-  const catalogModel = new CatalogModel(api);
+const catalogModel = new CatalogModel();
   const basketModel = new BasketModel();
   const orderModel = new OrderModel();
 
@@ -43,7 +43,12 @@ function boot() {
   const orderView = new OrderView(modal.content); // контейнер контента модалки
 
   // 5) презентеры
-  const catalogPresenter = new CatalogPresenter(catalogModel, catalogView, events);
+const catalogPresenter = new CatalogPresenter(
+  catalogModel,
+  catalogView,
+  events,
+  api                          
+);
   const basketPresenter  = new BasketPresenter(basketModel, basketView, events, catalogModel);
   const orderPresenter   = new OrderPresenter(orderModel, orderView, events, api, basketModel);
 
@@ -132,20 +137,15 @@ function boot() {
   });
 
   // 9) Экран «успех» с суммой списанных синапсов
-  events.on<{ total: number }>(AppEvent.OrderCompleted, ({ total }) => {
-    const success = cloneTemplate<HTMLElement>('#success');
+events.on<{ total: number }>(AppEvent.OrderCompleted, ({ total }) => {
+  const msg = new SuccessMessage();        
+  msg.setTotal(total);                     
+  msg.onClose(() => modal.close());        
+  modal.open(msg.element);                 
+});
 
-    const sumEl = success.querySelector('.order-success__description') as HTMLElement | null;
-    if (sumEl) {
-      sumEl.textContent = `Списано ${new Intl.NumberFormat('ru-RU').format(total)} синапсов`;
-    }
 
-    success.querySelector('.order-success__close')?.addEventListener('click', () => modal.close());
-    modal.open(success);
-  });
-
-  // страховочный рендер каталога
-  catalogModel.getProducts().then((p) => catalogView.renderCatalog(p));
+  
 }
 
 // безопасный старт один раз

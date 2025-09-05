@@ -1,4 +1,5 @@
-import { IOrderView } from '../types/views';
+
+import { IOrderView, ISuccessView } from '../types/views';
 import { cloneTemplate, ensureElement } from '../utils/utils';
 
 type Payment = 'card' | 'cash';
@@ -22,7 +23,6 @@ export class OrderView implements IOrderView {
   private payBtn?: HTMLButtonElement;
 
   renderStage1(): void {
-    // КОРНЕВОЙ ЭЛЕМЕНТ ШАБЛОНА — ФОРМА
     const form = cloneTemplate<HTMLFormElement>('#order');
     this.form1 = form;
 
@@ -32,14 +32,13 @@ export class OrderView implements IOrderView {
     this.nextBtn = ensureElement<HTMLButtonElement>('.order__button', form);
     this.errorEl = ensureElement<HTMLElement>('.form__errors', form);
 
-    // по умолчанию ничего не выбрано (обе кнопки с .button_alt)
+    // по умолчанию — ничего не выбрано
     this.setActivePayment(null);
 
     this.container.replaceChildren(form);
   }
 
   renderStage2(): void {
-    // КОРНЕВОЙ ЭЛЕМЕНТ ШАБЛОНА — ФОРМА
     const form = cloneTemplate<HTMLFormElement>('#contacts');
     this.form2 = form;
 
@@ -55,15 +54,15 @@ export class OrderView implements IOrderView {
     if (this.errorEl) this.errorEl.textContent = message;
   }
 
-  setNextEnabled?(enabled: boolean): void {
+  setNextEnabled(enabled: boolean): void {
     if (this.nextBtn) this.nextBtn.disabled = !enabled;
   }
 
-  setPayEnabled?(enabled: boolean): void {
+  setPayEnabled(enabled: boolean): void {
     if (this.payBtn) this.payBtn.disabled = !enabled;
   }
 
-  onPaymentSelect?(cb: (method: Payment) => void): void {
+  onPaymentSelect(cb: (method: Payment) => void): void {
     this.btnCard?.addEventListener('click', (e) => {
       e.preventDefault();
       this.setActivePayment('card');
@@ -76,20 +75,20 @@ export class OrderView implements IOrderView {
     });
   }
 
-  onAddressInput?(cb: (addr: string) => void): void {
+  onAddressInput(cb: (addr: string) => void): void {
     this.addressInput?.addEventListener('input', () => cb(this.addressInput!.value.trim()));
   }
 
-  onAddressBlur?(cb: () => void): void {
+  onAddressBlur(cb: () => void): void {
     this.addressInput?.addEventListener('blur', cb);
   }
 
-  onNextFromStage1?(cb: () => void): void {
+  onNextFromStage1(cb: () => void): void {
     this.form1?.addEventListener('submit', (e) => { e.preventDefault(); cb(); });
     this.nextBtn?.addEventListener('click', (e) => { e.preventDefault(); cb(); });
   }
 
-  onContactsInput?(cb: (v: { email: string; phone: string }) => void): void {
+  onContactsInput(cb: (v: { email: string; phone: string }) => void): void {
     const fire = () => cb({
       email: this.emailInput?.value.trim() ?? '',
       phone: this.phoneInput?.value.trim() ?? '',
@@ -98,14 +97,41 @@ export class OrderView implements IOrderView {
     this.phoneInput?.addEventListener('input', fire);
   }
 
-  onPay?(cb: () => void): void {
+  onPay(cb: () => void): void {
     this.form2?.addEventListener('submit', (e) => { e.preventDefault(); cb(); });
     this.payBtn?.addEventListener('click', (e) => { e.preventDefault(); cb(); });
   }
 
-  // визуально отмечаем выбранный способ: активной кнопке снимаем .button_alt
+  // визуально отмечаем выбранный способ (активной убираем .button_alt)
   private setActivePayment(method: Payment | null) {
     this.btnCard?.classList.toggle('button_alt', method !== 'card');
     this.btnCash?.classList.toggle('button_alt', method !== 'cash');
   }
 }
+
+// ——— успех 
+
+export class SuccessMessage implements ISuccessView {
+
+  public element: HTMLElement;
+  private descEl: HTMLElement;
+  private closeBtn: HTMLButtonElement;
+
+constructor(templateSelector?: string) {
+    const tpl = templateSelector ?? '#success';
+    const root = cloneTemplate<HTMLElement>(tpl);
+    this.element = root;
+    this.descEl = ensureElement<HTMLElement>('.order-success__description', root);
+    this.closeBtn = ensureElement<HTMLButtonElement>('.order-success__close', root);
+  }
+
+  setTotal(total: number): void {
+    const formatted = new Intl.NumberFormat('ru-RU').format(total ?? 0);
+    this.descEl.textContent = `Списано ${formatted} синапсов`;
+  }
+
+  onClose(handler: () => void): void {
+    this.closeBtn.addEventListener('click', handler);
+  }
+}
+
