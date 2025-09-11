@@ -1,31 +1,44 @@
-import { IOrderFormData } from '../types/domain';
 import { IOrderModel } from '../types/models';
+import { IOrderFormData } from '../types/domain';
+
+type Payment = 'card' | 'cash' | string;
 
 export class OrderModel implements IOrderModel {
-  private data: Partial<IOrderFormData> = {};
+  private payment: Payment = '';
+  private address = '';
+  private email = '';
+  private phone = '';
 
-  setPaymentMethod(method: string): void {
-    this.data.payment = method;
+  setPaymentMethod(method: Payment): void {
+    this.payment = method;
   }
 
   setAddress(address: string): void {
-    this.data.address = address;
+    this.address = address.trim();
   }
 
-  setContacts({ email, phone }: { email: string; phone: string }): void {
-    this.data.email = email;
-    this.data.phone = phone;
+  setContacts(data: Pick<IOrderFormData, 'email' | 'phone'>): void {
+    this.email = data.email.trim();
+    this.phone = data.phone.trim();
   }
 
   getOrderData(): IOrderFormData {
-    return this.data as IOrderFormData;
+    return {
+      payment: this.payment,
+      address: this.address,
+      email: this.email,
+      phone: this.phone,
+    };
   }
 
+  // Валидность шагов оформления
   isValidStage1(): boolean {
-    return Boolean(this.data.payment && this.data.address);
+    return Boolean(this.address);
   }
 
   isValidStage2(): boolean {
-    return Boolean(this.data.email && this.data.phone);
+    const emailOk = /\S+@\S+\.\S+/.test(this.email);
+    const phoneOk = this.phone.replace(/\D/g, '').length >= 10;
+    return emailOk && phoneOk;
   }
 }

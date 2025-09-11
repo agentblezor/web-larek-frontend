@@ -2,19 +2,18 @@ import { IProduct } from '../types/domain';
 import { ICatalogModel } from '../types/models';
 
 export class CatalogModel implements ICatalogModel {
-  private _products: IProduct[] = [];
+  private products: IProduct[] = [];
 
   setProducts(products: IProduct[]): void {
-    this._products = products;
+    this.products = products;
   }
 
   getProducts(): IProduct[] {
-    return this._products;
-   
+    return this.products;
   }
 
   getProductById(id: string): IProduct | undefined {
-    return this._products.find((p) => p.id === id);
+    return this.products.find((p) => p.id === id);
   }
 }
 

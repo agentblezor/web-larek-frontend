@@ -7,7 +7,8 @@ export const enum AppEvent {
   OrderStage1Submitted = 'order:stage1-submitted',
   OrderStage2Submitted = 'order:stage2-submitted',
   OrderCompleted = 'order:completed',
-  ModalClosed = 'modal:closed'
+  ModalClosed = 'modal:closed',
+  ScreenChanged = 'screenChanged'
 }
 
 // Примеры полезных интерфейсов данных для событий

@@ -9,6 +9,8 @@ export class BasketModel implements IBasketModel {
   }
 
   addItem(item: IBasketItem): void {
+    // не добавляем «Бесценно»
+    if (item.price == null) return;
     this.items.set(item.id, item);
   }
 
@@ -21,10 +23,16 @@ export class BasketModel implements IBasketModel {
   }
 
   getTotal(): number {
-    return this.getItems().reduce((sum, item) => sum + item.price, 0);
+    return this.getItems().reduce((sum, item) => sum + (item.price ?? 0), 0);
   }
 
   hasItem(id: string): boolean {
     return this.items.has(id);
   }
+
+  // (опционально, удобно для счётчика)
+  get size(): number {
+    return this.items.size;
+  }
 }
+
